@@ -2,13 +2,18 @@
 close all;
 %% Import Data
 %data_file = 'Data/WithBackgroundNoise.log';
-data_file = 'Data/NoBackgroundNoise.log';
+%data_file = 'Data/NoBackgroundNoise.log';
+%data_file = 'Data/statno.log';
+data_file = 'Data/statwith.log';
 [position, distance_signals] = import_data(data_file);
 
 %% Plot Positions
 figure;
 plot(position);
 legend('x','y','z','location','best');
+xlabel('Time [s]');
+ylabel('Distance [m]');
+title('Position Calculation');
 
 %% Plot Distances
 figure; hold on;
@@ -18,6 +23,9 @@ for i = 1:length(distance_signals)
     labels = {labels{:},distance_signals{i}.name};
 end
 legend(labels,'location','best');
+xlabel('Time [s]');
+ylabel('Distance [m]');
+title('Beacon Distance Measurement');
 
 %% Aux Functions
 function [position_ts, signal_data] = import_data(file_path)
