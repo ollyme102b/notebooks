@@ -23,7 +23,7 @@ yp = yp - ym;
 
 if x0-x1 == 0 % slope undefined case
     xfs = [x0,x0]; % solution must have same x value
-    yfs = [ym + sqrt(l^2-x0^2),ym - sqrt(l^2-x0^2)]; % solve circle intersect verical line y values
+    yfs = [sqrt(l^2-x0^2),-sqrt(l^2-x0^2)]; % solve circle intersect verical line y values
 else % slope defined case
     m = (y1-y0)/(x1-x0); % slope
     b = y0 - m*x0; % y intercept

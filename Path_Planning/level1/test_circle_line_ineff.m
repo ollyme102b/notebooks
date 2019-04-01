@@ -27,7 +27,7 @@ assert(abs(yt + sqrt(3))<tol);
 
 %% test (xm,ym) transformation on random data
 rng default; % set rand seed
-N = 100; % randomized test count
+N = 10000; % randomized test count
 min = -100; % random range max
 max = 100; % random range min
 for i = 1:N
@@ -49,5 +49,8 @@ for i = 1:N
         assert(ya == yb+ym);
     end
 end
+
+%% Done
+disp('All Tests Passed.');
    
    
