@@ -1,4 +1,4 @@
-function [xf,yf] = circle_line_ineff(xm, ym, l, x0, y0, x1, y1,varargin)
+function [xf,yf] = circle_line_ineff(xm, ym, l, x0, y0, x1, y1, varargin)
 % calculates the (xf,yf) position given (xm,ym), l, and the constraint line
 % from (x0,y0) to (x1,y1) that is closest to either (1) the "previous"
 % point (xp,yp) given by varargin or (2) the origin (0,0).
