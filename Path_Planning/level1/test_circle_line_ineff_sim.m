@@ -1,4 +1,4 @@
-%% Simulatation with Viszualized
+%% Simulatation with Visualized
 
 % Initialize Folly position
 xf = 0;
