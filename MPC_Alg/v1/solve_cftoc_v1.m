@@ -9,7 +9,7 @@ assert(size(x0,2)==1, 'x0 must be a col vec');
 assert(all(size(x0) == size(xbar)), 'x0 and xbar must have same dimensions');
 assert(size(A,2)==size(A,1),'A must be square');
 assert(size(A,2)==nx,'Col A must = row x0.');
-assert(size(A,1)==nx,'Row B must = row x0.');
+assert(size(B,1)==nx,'Row B must = row x0.');
 
 % initialize YALMIP variables
 X = sdpvar(nx,N+1);
