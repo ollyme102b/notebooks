@@ -28,7 +28,7 @@ class CFTOCSolverV1:
         """
         return self.problem.status
 
-    def __init__(self, A, B, x0, xbar, N):
+    def __init__(self, A, B, x0, xbar, N, umax):
         """
         Initializes cvxpy problem with the following params
         :param A: state transition matrix
@@ -54,6 +54,7 @@ class CFTOCSolverV1:
         assert x0.ndim == 1, 'x0 must be flat'
         assert xbar.ndim == 1, 'xbar must be flat'
         assert len(x0) == len(xbar), 'x0 must be same lengtha s xbar'
+        assert umax is None or umax > 0, 'umax must be None or greater than 0'
 
         # initialize cvxpy problem
         self.X = cvxpy.Variable((nx, N + 1))
@@ -70,18 +71,25 @@ class CFTOCSolverV1:
 
         # dynamics constraints
         constraints += [self.X[:, 0] == self.x0]
-        for t in range(N - 1):
+        for t in range(N):
             constraints += [self.X[:, t + 1] == A * self.X[:, t] + B * self.U[:, t]]
+
+        # input constraints
+        if umax is not None:
+            self.umax = cvxpy.Parameter()
+            self.umax.value = umax
+            for t in range(N):
+                constraints += [cvxpy.norm(self.U[:, t], 'inf') <= self.umax]
 
         # cost function initialization
         cost = 0
 
         # state cost
-        for t in range(1, N):
+        for t in range(1, N + 1):
             cost += cvxpy.sum_squares(self.X[:, t] - self.xbar)
 
         # input cost
-        for t in range(N - 1):
+        for t in range(N):
             cost += cvxpy.sum_squares(self.U[:, t])
 
         self.problem = cvxpy.Problem(cvxpy.Minimize(cost), constraints)

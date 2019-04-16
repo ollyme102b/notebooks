@@ -22,10 +22,10 @@ xf, yf = circle_line_intersection(xm, ym, l, x0, y0, x1, y1)
 # simulation
 T = 600  # Total time
 dt = 1  # time per iteration
-sigma = 0.05  # simulation noise standard deviation
+sigma = 0.02  # simulation noise standard deviation
 
 # initialize MPC Alg
-controller = CFTOCSolverV1(np.eye(2), dt * np.eye(2), np.array([xf, yf]), np.array([xf, yf]), 10)
+controller = CFTOCSolverV1(np.eye(2), dt * np.eye(2), np.array([xf, yf]), np.array([xf, yf]), 2, 0.1)
 
 for t in range(T):
     # molly movement
@@ -45,7 +45,7 @@ for t in range(T):
     plt.plot(xm, ym, '.', color='olive', label='Molly Position')  # MollyPosition
     plt.plot(xfb, yfb, 'o', color='indigo', label='Folly Optimal')  # Folly optimal position
     plt.plot(xf, yf, 'r.', label='Folly Position')  # Folly Actual Positions
-    plt.quiver(xf, yf, 10 * vc[0], 10 * vc[1], color='orange')  # Folly velocity command
+    plt.quiver(xf, yf, 10 * vc[0], 10 * vc[1], color='orange', label='Folly Vel Command')  # Folly velocity command
     plt.legend()
     plt.title('Level 1 Path Planner Level 1 MPC')
     plt.show(block = False)
