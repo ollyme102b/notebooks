@@ -9,7 +9,7 @@ def circle_line_intersection_path(m_pos, l, l0, l1, d_m_pos, n, f_pos=np.array([
     :param l0: position vector of start of path line constraint
     :param l1: position vector of end of path line constraint
     :param d_m_pos: deviation of molly per time step
-    :param N: path horizon
+    :param n: path horizon
     :param f_pos: folly position vector
     :return: folly path
     """
