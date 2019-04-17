@@ -19,7 +19,7 @@ class CFTOCSolverV1:
         solves cvxpy problem and returns problem solution variable
         :return: optimal actuation value
         """
-        self.problem.solve(warm_start=True)
+        self.problem.solve(solver=cvxpy.ECOS)
         return self.U[:, 0].value
 
     def status(self):

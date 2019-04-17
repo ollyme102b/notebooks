@@ -37,7 +37,7 @@ for t in range(T):
 
     # find optimal command
     vc = controller.calculate_optimal_actuation(np.array([xf, yf]),
-                                            np.array([xfb, yfb]))  # optimal velocity command
+                                                np.array([xfb, yfb]))  # optimal velocity command
 
     # plot state before actuation hold on pltis equal
     plt.plot([x0, x1], [y0, y1], 'k--', linewidth=1, label='Path')  # constraint path
@@ -48,10 +48,10 @@ for t in range(T):
     plt.quiver(xf, yf, 10 * vc[0], 10 * vc[1], color='orange', label='Folly Vel Command')  # Folly velocity command
     plt.legend()
     plt.title('Level 1 Path Planner Level 1 MPC')
-    plt.show(block = False)
-    plt.pause(1)
+    plt.show(block=False)
+    plt.pause(.1)
     plt.close()
 
     # simulate actuation of optimal command
-    xf = xf + dt * vc[0] + np.random.normal(0, sigma)
-    yf = yf + dt * vc[1] + np.random.normal(0, sigma)
+    xf = xf + dt * vc[0] + dt * np.random.normal(0, sigma)
+    yf = yf + dt * vc[1] + dt * np.random.normal(0, sigma)
