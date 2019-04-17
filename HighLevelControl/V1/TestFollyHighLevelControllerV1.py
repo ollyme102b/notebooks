@@ -17,7 +17,7 @@ l0 = np.array([-10, -4])
 l1 = np.array([4, -10])
 
 # simulation
-T = 600  # Total time
+T = 300  # Total time
 dt = 0.2  # time per iteration
 sigma = 0.02  # simulation noise standard deviation
 
@@ -34,9 +34,13 @@ follyHLC = FollyHighLevelControllerV1(molly_position,
 # constant molly velocity
 molly_velocity_command = np.array([0.01, 0.05])
 
+# total deviation
+deviation = 0
+
 iteration_time = timeit.timeit()  # time iteration for real time plot
 for t in range(T):
     load_length_deviation = np.linalg.norm(folly_position - molly_position) - object_length
+    deviation += np.abs(load_length_deviation)
 
     # plot current state
     plt.plot([l0[0], l1[0]], [l0[1], l1[1]], 'k--', linewidth=1, label='Path')  # constraint path
@@ -45,9 +49,12 @@ for t in range(T):
     plt.plot(molly_position[0], molly_position[1], '.', color='olive', label='Molly Position')  # MollyPosition
     plt.plot(folly_position[0], folly_position[1], 'r.', label='Folly Position')  # Folly Actual Positions
     plt.legend()
-    plt.title('Folly High Level Controller V1')
+    plt.axis('equal')
+    plt.title('Folly High Level Controller V1 {0}/{1}'.format(t, T))
+    plt.xlabel('[m]')
+    plt.ylabel('[m]')
     plt.show(block=False)
-    plt.pause(dt - (timeit.timeit() - iteration_time))  # pause in real time
+    plt.pause(np.maximum(dt - (timeit.timeit() - iteration_time), 0))  # pause in real time
     iteration_time = timeit.timeit()  # reset iteration time
     plt.close()
 
@@ -59,3 +66,5 @@ for t in range(T):
 
     # actuate optimal command with noise
     folly_position = folly_position + dt * folly_velocity_command + dt * np.random.normal(0, sigma, 2)
+
+print('The average deviation was {:.1f}cm.'.format(deviation / T * 100))
