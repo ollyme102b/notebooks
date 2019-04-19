@@ -1,5 +1,6 @@
 import numpy as np
 import cvxpy
+from packaging import version
 
 
 class CFTOCSolverV1:
@@ -37,6 +38,10 @@ class CFTOCSolverV1:
         :param xbar: prefered end state
         :param N: number of time steps per cftoc
         """
+
+        # assert correct CVXPY
+        assert version.parse(cvxpy.__version__) > version.parse('1'), 'CVXPY version cannot be CVXPY v0'
+
         nx = x0.shape[0]
         nu = B.shape[1]
 
