@@ -13,19 +13,18 @@ folly_position = np.array([-2, -7.5])
 object_length = 2
 
 # line path constraint
-l0 = np.array([-10, -4])
-l1 = np.array([4, -10])
+path_constraints = np.array([[4, 10, 80]])
 
 # simulation
 T = 300  # Total time
-dt = 1  # time per iteration
+dt = 0.5  # time per iteration
 sigma = 0.0  # simulation noise standard deviation
 
 # initialize MPC Alg
 follyHLC = FollyHighLevelControllerV3(molly_position,
                                       folly_position,
                                       object_length,
-                                      l0, l1,  # constraint path ends
+                                      path_constraints,  # path_contraints
                                       10,  # horizon length
                                       dt,  # step time
                                       0.1  # maximum speed
@@ -37,6 +36,13 @@ molly_velocity_command = np.array([0.01, 0.05])
 # total deviation
 deviation = 0
 
+
+# path_constaints plot function
+def plot_constraints(path_constraints, x_domain=np.linspace(-10, 0, 10)):
+    for n in range(path_constraints.shape[0]):
+        plt.plot(x_domain, (-path_constraints[n, 2] - path_constraints[n, 0] * x_domain) / path_constraints[n, 1])
+
+
 prev_time = time.time()  # time iteration for real time plot
 new_time = time.time()
 for t in range(T):
@@ -44,7 +50,7 @@ for t in range(T):
     deviation += np.abs(load_length_deviation)
 
     # plot current state
-    plt.plot([l0[0], l1[0]], [l0[1], l1[1]], 'k--', linewidth=1, label='Path')  # constraint path
+    plot_constraints(path_constraints)  # constraint path
     plt.plot([molly_position[0], folly_position[0]], [molly_position[1], folly_position[1]], 'b-', linewidth=2,
              label='Load: dev {:.1f}cm'.format(load_length_deviation * 100))  # object lifted
     plt.plot(molly_position[0], molly_position[1], '.', color='olive', label='Molly Position')  # MollyPosition
@@ -52,7 +58,10 @@ for t in range(T):
     plt.legend()
     plt.axis('equal')
     plt.title(
-        'Folly High Level Controller V3 {0}/{1} Iteration Time {2:.2f}s'.format(t, T, new_time - prev_time))
+        'Folly High Level Controller V3 {0}/{1} Iteration Time {2:.2f}s'.format(t, T,
+                                                                                follyHLC.optimizer.m.options.SOLVETIME))
+    # plt.title(
+    #    'Folly High Level Controller V3 {0}/{1} Iteration Time {2:.2f}s'.format(t, T, new_time - prev_time))
     plt.xlabel('[m]')
     plt.ylabel('[m]')
     plt.show(block=False)

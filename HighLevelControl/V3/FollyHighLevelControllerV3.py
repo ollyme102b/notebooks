@@ -10,8 +10,7 @@ class FollyHighLevelControllerV3:
     def __init__(self, molly_initial_position,
                  folly_initial_position,
                  object_length,
-                 line_path_start_point,
-                 line_path_end_point,
+                 path_constraints,
                  horizon,
                  step_time,
                  max_speed):
@@ -20,15 +19,13 @@ class FollyHighLevelControllerV3:
         :param molly_initial_position: molly initial position
         :param folly_initial_position: folly initial position
         :param object_length: lifted object length
-        :param line_path_start_point: Folly path line constraint start point
-        :param line_path_end_point: Folly path line constraint end point
+        :param path_constraints: path constaints in specific format
         :param horizon: MPC horizon
         :param step_time: time in between MPC steps
         :param max_speed: maximum allowable Folly speed
         """
         self._object_length = object_length
-        self._line_path_start_point = line_path_start_point
-        self._line_path_end_point = line_path_end_point
+        self._path_constraints = path_constraints
         self._horizon = horizon
         self._step_time = step_time
 
@@ -38,7 +35,7 @@ class FollyHighLevelControllerV3:
         B = step_time * np.eye(2)  # input velocity dynamics
 
         self.optimizer = CFTOCSolverV3(A, B, folly_initial_position, molly_expected_path, horizon, max_speed,
-                                       object_length)
+                                       object_length, path_constraints)
 
     def _molly_expected_path(self, molly_position, molly_velocity):
         """
@@ -50,7 +47,7 @@ class FollyHighLevelControllerV3:
         molly_expected_path = np.zeros((2, self._horizon))
 
         for t in range(self._horizon):
-            molly_expected_path[:, t] = (t + 1) * molly_velocity + molly_position
+            molly_expected_path[:, t] = self._step_time * (t + 1) * molly_velocity + molly_position
 
         return molly_expected_path
 
