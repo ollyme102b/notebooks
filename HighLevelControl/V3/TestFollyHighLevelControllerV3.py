@@ -45,10 +45,12 @@ def plot_constraints(path_constraints, x_domain=np.linspace(-10, 0, 10)):
 
 prev_time = time.time()  # time iteration for real time plot
 new_time = time.time()
+plt.show(block=False)
 for t in range(T):
     load_length_deviation = np.linalg.norm(folly_position - molly_position) - object_length
     deviation += np.abs(load_length_deviation)
 
+    plt.clf()
     # plot current state
     plot_constraints(path_constraints)  # constraint path
     plt.plot([molly_position[0], folly_position[0]], [molly_position[1], folly_position[1]], 'b-', linewidth=2,
@@ -64,9 +66,7 @@ for t in range(T):
     #    'Folly High Level Controller V3 {0}/{1} Iteration Time {2:.2f}s'.format(t, T, new_time - prev_time))
     plt.xlabel('[m]')
     plt.ylabel('[m]')
-    plt.show(block=False)
     plt.pause(np.maximum(dt - (new_time - prev_time), 0.01))  # pause in real time
-    plt.close()
 
     prev_time = new_time
     new_time = time.time()
