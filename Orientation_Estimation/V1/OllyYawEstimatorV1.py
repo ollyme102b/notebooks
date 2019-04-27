@@ -32,8 +32,9 @@ class OllyYawEstimatorV1:
 
     def estimate_yaw(self):
         dot_products = np.sum(np.multiply(self.velocity_body_stack, self.velocity_inertial_stack), axis=0)
-        directionals = [np.sign(np.cross(self.velocity_body_stack[:,t], self.velocity_inertial_stack[:,t])) for t in range(self.N)]
+        directionals = [np.sign(np.cross(self.velocity_body_stack[:, t], self.velocity_inertial_stack[:, t])) for t in
+                        range(self.N)]
         norms = np.linalg.norm(self.velocity_body_stack, axis=0) * np.linalg.norm(self.velocity_inertial_stack, axis=0)
         yaws = np.nan_to_num(np.arccos(dot_products / norms)) * directionals
-        self.yaw = np.mean(yaws)
+        self.yaw = np.mean(np.mod(yaws,2*np.pi))
         return self.yaw

@@ -30,8 +30,6 @@ def test1():
 
 
 def test2():
-    tol = 0.1
-
     olly_position = np.zeros((2,))
     olly_yaw = 0
 
@@ -57,7 +55,9 @@ def test2():
 
         olly_position = olly_position + step_time * olly_inertial_velocity
 
-        olly_yaw_estimator.update_with_numpy_array(olly_inertial_velocity+np.array([np.random.normal(0, sigma1), np.random.normal(0, sigma1)]), olly_body_velocity_command)
+        olly_yaw_estimator.update_with_numpy_array(
+            olly_inertial_velocity + np.array([np.random.normal(0, sigma1), np.random.normal(0, sigma1)]),
+            olly_body_velocity_command)
 
         yaw_actual[t] = olly_yaw
         yaw_estimate[t] = olly_yaw_estimator.estimate_yaw()
@@ -69,7 +69,47 @@ def test2():
     plt.show()
 
 
+def test3():
+    olly_position = np.zeros((2,))
+    olly_yaw = lambda x: (np.pi / 2 * (x // 50)) % (2 * np.pi)
+
+    olly_yaw_estimator = OllyYawEstimatorV1()
+
+    sigma = 0.01
+    sigma1 = 0.0001
+
+    simulation_time = 300
+    step_time = 0.1
+
+    time_domain = np.arange(0, simulation_time)
+    yaw_actual = np.zeros((simulation_time,))
+    yaw_estimate = np.zeros((simulation_time,))
+
+    for t in range(simulation_time):
+
+        if t % 10 == 0:
+            olly_body_velocity_command = np.array([np.random.normal(0, sigma), np.random.normal(0, sigma)])
+
+        olly_inertial_velocity = rotate(olly_body_velocity_command, olly_yaw(t))
+
+        olly_position = olly_position + step_time * olly_inertial_velocity
+
+        olly_yaw_estimator.update_with_numpy_array(
+            olly_inertial_velocity + np.array([np.random.normal(0, sigma1), np.random.normal(0, sigma1)]),
+            olly_body_velocity_command)
+
+        yaw_actual[t] = olly_yaw(t)
+        yaw_estimate[t] = olly_yaw_estimator.estimate_yaw()
+
+        # assert (olly_yaw_estimator.estimate_yaw() - olly_yaw) < tol, 'No noise test failing'
+    plt.plot(time_domain, yaw_actual, label='actual')
+    plt.plot(time_domain, yaw_estimate, label='estimate')
+    plt.legend()
+    plt.show()
+
+
 if __name__ == '__main__':
-    #test1()
+    test1()
     test2()
+    test3()
     print('All Tests Passed')
